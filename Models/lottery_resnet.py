@@ -213,10 +213,10 @@ class BasicBlock2(nn.Module):
         if dilation > 1:
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = layers_class.Conv2d(inplanes, planes, 3, stride)
+        self.conv1 = layers_class.Conv2d(inplanes, planes, 3, stride, padding=1)
         self.bn1 = norm_layer(planes)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = layers_class.Conv2d(planes, planes, 3)
+        self.conv2 = layers_class.Conv2d(planes, planes, 3, padding=1)
         self.bn2 = norm_layer(planes)
         self.downsample = downsample
         self.stride = stride
@@ -261,11 +261,11 @@ class Bottleneck2(nn.Module):
             norm_layer = nn.BatchNorm2d
         width = int(planes * (base_width / 64.0)) * groups
         # Both self.conv2 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = layers_class.Conv2d(inplanes, width, 3)
+        self.conv1 = layers_class.Conv2d(inplanes, width, 3, padding=1)
         self.bn1 = norm_layer(width)
-        self.conv2 = layers_class.Conv2d(width, width, 3, stride, groups, dilation)
+        self.conv2 = layers_class.Conv2d(width, width, 3, stride, groups, padding=dilation)
         self.bn2 = norm_layer(width)
-        self.conv3 = layers_class.Conv2d(width, planes * self.expansion, 3)
+        self.conv3 = layers_class.Conv2d(width, planes * self.expansion, 3, padding=1)
         self.bn3 = norm_layer(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
@@ -413,7 +413,7 @@ class ResNet2(nn.Module):
             stride = 1
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                layers_class.Conv2d(self.inplanes, planes * block.expansion,1, stride),
+                layers_class.Conv2d(self.inplanes, planes * block.expansion, 1, stride),
                 norm_layer(planes * block.expansion),
             )
 
