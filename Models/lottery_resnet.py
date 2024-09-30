@@ -397,9 +397,9 @@ class ResNet2(nn.Module):
         # This improves the model by 0.2~0.3% according to https://arxiv.org/abs/1706.02677
         if zero_init_residual:
             for m in self.modules():
-                if isinstance(m, Bottleneck):
+                if isinstance(m, Bottleneck2):
                     nn.init.constant_(m.bn3.weight, 0)
-                elif isinstance(m, BasicBlock):
+                elif isinstance(m, BasicBlock2):
                     nn.init.constant_(m.bn2.weight, 0)
 
     def _make_layer(
@@ -467,7 +467,7 @@ class ResNet2(nn.Module):
 
         fc_out = self.fc(x)
 
-        return fc_out, x
+        return fc_out
 
 def resnet34(input_shape, num_classes, dense_classifier=False, pretrained=False):
     return ResNet2(BasicBlock2, [3, 4, 6, 3], num_classes=num_classes)
