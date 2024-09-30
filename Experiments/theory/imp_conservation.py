@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from Layers import layers
+from Layers import layers_class_class
 from Utils import load
 from Utils import generator
 from train import *
@@ -37,7 +37,7 @@ def run(args):
         names = []
         inv_size = []
         for name, module in model.named_modules():
-            if isinstance(module, (layers.Linear, layers.Conv2d)):
+            if isinstance(module, (layers_class.Linear, layers_class.Conv2d)):
                 num_elements = np.prod(module.weight.shape)
                 if module.bias is not None:
                     num_elements += np.prod(module.bias.shape)
@@ -49,7 +49,7 @@ def run(args):
     def average_mag_score(model):
         average_scores = []
         for module in model.modules():
-            if isinstance(module, (layers.Linear, layers.Conv2d)):
+            if isinstance(module, (layers_class.Linear, layers_class.Conv2d)):
                 W = module.weight.detach().cpu().numpy()
                 W_score = W**2
                 score_sum = W_score.sum()

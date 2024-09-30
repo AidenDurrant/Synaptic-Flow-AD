@@ -1,4 +1,4 @@
-from Layers import layers
+from Layers import layers_class_class
 
 def masks(module):
     r"""Returns an iterator over modules masks, yielding the mask.
@@ -10,16 +10,16 @@ def masks(module):
 def trainable(module):
     r"""Returns boolean whether a module is trainable.
     """
-    return not isinstance(module, (layers.Identity1d, layers.Identity2d))
+    return not isinstance(module, (layers_class.Identity1d, layers_class.Identity2d))
 
 def prunable(module, batchnorm, residual):
     r"""Returns boolean whether a module is prunable.
     """
-    isprunable = isinstance(module, (layers.Linear, layers.Conv2d))
+    isprunable = isinstance(module, (layers_class.Linear, layers_class.Conv2d))
     if batchnorm:
-        isprunable |= isinstance(module, (layers.BatchNorm1d, layers.BatchNorm2d))
+        isprunable |= isinstance(module, (layers_class.BatchNorm1d, layers_class.BatchNorm2d))
     if residual:
-        isprunable |= isinstance(module, (layers.Identity1d, layers.Identity2d))
+        isprunable |= isinstance(module, (layers_class.Identity1d, layers_class.Identity2d))
     return isprunable
 
 def parameters(model):

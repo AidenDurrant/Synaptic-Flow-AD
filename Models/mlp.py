@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from Layers import layers
+from Layers import layers_class_class
 from torch.nn import functional as F
 
 
@@ -10,17 +10,17 @@ def fc(input_shape, num_classes, dense_classifier=False, pretrained=False, L=6, 
   
   # Linear feature extractor
   modules = [nn.Flatten()]
-  modules.append(layers.Linear(size, N))
+  modules.append(layers_class.Linear(size, N))
   modules.append(nonlinearity)
   for i in range(L-2):
-    modules.append(layers.Linear(N,N))
+    modules.append(layers_class.Linear(N,N))
     modules.append(nonlinearity)
 
   # Linear classifier
   if dense_classifier:
     modules.append(nn.Linear(N, num_classes))
   else:
-    modules.append(layers.Linear(N, num_classes))
+    modules.append(layers_class.Linear(N, num_classes))
   model = nn.Sequential(*modules)
 
   # Pretrained model
@@ -35,10 +35,10 @@ def conv(input_shape, num_classes, dense_classifier=False, pretrained=False, L=3
   
   # Convolutional feature extractor
   modules = []
-  modules.append(layers.Conv2d(channels, N, kernel_size=3, padding=3//2))
+  modules.append(layers_class.Conv2d(channels, N, kernel_size=3, padding=3//2))
   modules.append(nonlinearity)
   for i in range(L-2):
-    modules.append(layers.Conv2d(N, N, kernel_size=3, padding=3//2))
+    modules.append(layers_class.Conv2d(N, N, kernel_size=3, padding=3//2))
     modules.append(nonlinearity)
       
   # Linear classifier
@@ -46,7 +46,7 @@ def conv(input_shape, num_classes, dense_classifier=False, pretrained=False, L=3
   if dense_classifier:
     modules.append(nn.Linear(N * width * height, num_classes))
   else:
-    modules.append(layers.Linear(N * width * height, num_classes))
+    modules.append(layers_class.Linear(N * width * height, num_classes))
   model = nn.Sequential(*modules)
 
   # Pretrained model

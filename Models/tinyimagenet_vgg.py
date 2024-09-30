@@ -12,7 +12,7 @@
 
 import torch
 import torch.nn as nn
-from Layers import layers
+from Layers import layers_class_class
 
 cfg = {
     'A' : [64,     'M', 128,      'M', 256, 256,           'M', 512, 512,           'M', 512, 512,           'M'],
@@ -27,7 +27,7 @@ class VGG(nn.Module):
         super().__init__()
         self.features = features
         
-        self.Linear = layers.Linear
+        self.Linear = layers_class.Linear
         if dense_classifier:
             self.Linear = nn.Linear
 
@@ -52,14 +52,14 @@ class VGG(nn.Module):
 
     def _initialize_weights(self):
         for m in self.modules():
-            if isinstance(m, layers.Conv2d):
+            if isinstance(m, layers_class.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
-            elif isinstance(m, layers.BatchNorm2d):
+            elif isinstance(m, layers_class.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-            elif isinstance(m, (layers.Linear, nn.Linear)):
+            elif isinstance(m, (layers_class.Linear, nn.Linear)):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
 
@@ -72,10 +72,10 @@ def make_layers(cfg, batch_norm=False):
             layer_list += [nn.MaxPool2d(kernel_size=2, stride=2)]
             continue
 
-        layer_list += [layers.Conv2d(input_channel, l, kernel_size=3, padding=1)]
+        layer_list += [layers_class.Conv2d(input_channel, l, kernel_size=3, padding=1)]
 
         if batch_norm:
-            layer_list += [layers.BatchNorm2d(l)]
+            layer_list += [layers_class.BatchNorm2d(l)]
         
         layer_list += [nn.ReLU(inplace=True)]
         input_channel = l

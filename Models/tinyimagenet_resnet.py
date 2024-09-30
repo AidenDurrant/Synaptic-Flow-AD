@@ -12,7 +12,7 @@
 
 import torch
 import torch.nn as nn
-from Layers import layers
+from Layers import layers_class_class
 
 class BasicBlock(nn.Module):
     """Basic Block for resnet 18 and resnet 34
@@ -30,22 +30,22 @@ class BasicBlock(nn.Module):
 
         #residual function
         self.residual_function = nn.Sequential(
-            layers.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
-            layers.BatchNorm2d(out_channels),
+            layers_class.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+            layers_class.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
-            layers.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, padding=1, bias=False),
-            layers.BatchNorm2d(out_channels * BasicBlock.expansion)
+            layers_class.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, padding=1, bias=False),
+            layers_class.BatchNorm2d(out_channels * BasicBlock.expansion)
         )
 
         #shortcut
-        self.shortcut = layers.Identity2d(in_channels)
+        self.shortcut = layers_class.Identity2d(in_channels)
 
         #the shortcut output dimension is not the same with residual function
         #use 1*1 convolution to match the dimension
         if stride != 1 or in_channels != BasicBlock.expansion * out_channels:
             self.shortcut = nn.Sequential(
-                layers.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
-                layers.BatchNorm2d(out_channels * BasicBlock.expansion)
+                layers_class.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
+                layers_class.BatchNorm2d(out_channels * BasicBlock.expansion)
             )
         
     def forward(self, x):
@@ -60,22 +60,22 @@ class BottleNeck(nn.Module):
         super().__init__()
         width = int(out_channels * (base_width / 64.))
         self.residual_function = nn.Sequential(
-            layers.Conv2d(in_channels, width, kernel_size=1, bias=False),
-            layers.BatchNorm2d(width),
+            layers_class.Conv2d(in_channels, width, kernel_size=1, bias=False),
+            layers_class.BatchNorm2d(width),
             nn.ReLU(inplace=True),
-            layers.Conv2d(width, width, stride=stride, kernel_size=3, padding=1, bias=False),
-            layers.BatchNorm2d(width),
+            layers_class.Conv2d(width, width, stride=stride, kernel_size=3, padding=1, bias=False),
+            layers_class.BatchNorm2d(width),
             nn.ReLU(inplace=True),
-            layers.Conv2d(width, out_channels * BottleNeck.expansion, kernel_size=1, bias=False),
-            layers.BatchNorm2d(out_channels * BottleNeck.expansion),
+            layers_class.Conv2d(width, out_channels * BottleNeck.expansion, kernel_size=1, bias=False),
+            layers_class.BatchNorm2d(out_channels * BottleNeck.expansion),
         )
 
-        self.shortcut = layers.Identity2d(in_channels)
+        self.shortcut = layers_class.Identity2d(in_channels)
 
         if stride != 1 or in_channels != out_channels * BottleNeck.expansion:
             self.shortcut = nn.Sequential(
-                layers.Conv2d(in_channels, out_channels * BottleNeck.expansion, stride=stride, kernel_size=1, bias=False),
-                layers.BatchNorm2d(out_channels * BottleNeck.expansion)
+                layers_class.Conv2d(in_channels, out_channels * BottleNeck.expansion, stride=stride, kernel_size=1, bias=False),
+                layers_class.BatchNorm2d(out_channels * BottleNeck.expansion)
             )
         
     def forward(self, x):
@@ -89,8 +89,8 @@ class ResNet(nn.Module):
         self.in_channels = 64
 
         self.conv1 = nn.Sequential(
-            layers.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
-            layers.BatchNorm2d(64),
+            layers_class.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
+            layers_class.BatchNorm2d(64),
             nn.ReLU(inplace=True))
         #we use a different inputsize than the original paper
         #so conv2_x's stride is 1
@@ -99,16 +99,16 @@ class ResNet(nn.Module):
         self.conv4_x = self._make_layer(block, 256, num_block[2], 2, base_width)
         self.conv5_x = self._make_layer(block, 512, num_block[3], 2, base_width)
         self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = layers.Linear(512 * block.expansion, num_classes)
+        self.fc = layers_class.Linear(512 * block.expansion, num_classes)
         if dense_classifier:
             self.fc = nn.Linear(512 * block.expansion, num_classes)
         self._initialize_weights()
 
     def _initialize_weights(self):
         for m in self.modules():
-            if isinstance(m, layers.Conv2d):
+            if isinstance(m, layers_class.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, (layers.BatchNorm2d, nn.GroupNorm)):
+            elif isinstance(m, (layers_class.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 

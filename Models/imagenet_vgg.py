@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from .utils import load_state_dict_from_url
-from Layers import layers
+from Layers import layers_class_class
 
 
 __all__ = [
@@ -31,13 +31,13 @@ class VGG(nn.Module):
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.classifier = nn.Sequential(
-            layers.Linear(512 * 7 * 7, 4096),
+            layers_class.Linear(512 * 7 * 7, 4096),
             nn.ReLU(True),
             nn.Dropout(),
-            layers.Linear(4096, 4096),
+            layers_class.Linear(4096, 4096),
             nn.ReLU(True),
             nn.Dropout(),
-            layers.Linear(4096, num_classes),
+            layers_class.Linear(4096, num_classes),
         )
         if init_weights:
             self._initialize_weights()
@@ -51,14 +51,14 @@ class VGG(nn.Module):
 
     def _initialize_weights(self):
         for m in self.modules():
-            if isinstance(m, layers.Conv2d):
+            if isinstance(m, layers_class.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
-            elif isinstance(m, layers.BatchNorm2d):
+            elif isinstance(m, layers_class.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-            elif isinstance(m, layers.Linear):
+            elif isinstance(m, layers_class.Linear):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
 
@@ -70,9 +70,9 @@ def make_layers(cfg, batch_norm=False):
         if v == 'M':
             layer_list += [nn.MaxPool2d(kernel_size=2, stride=2)]
         else:
-            conv2d = layers.Conv2d(in_channels, v, kernel_size=3, padding=1)
+            conv2d = layers_class.Conv2d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
-                layer_list += [conv2d, layers.BatchNorm2d(v), nn.ReLU(inplace=True)]
+                layer_list += [conv2d, layers_class.BatchNorm2d(v), nn.ReLU(inplace=True)]
             else:
                 layer_list += [conv2d, nn.ReLU(inplace=True)]
             in_channels = v

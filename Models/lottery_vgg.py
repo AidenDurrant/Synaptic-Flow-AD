@@ -7,14 +7,14 @@
 
 import torch.nn as nn
 import torch.nn.functional as F
-from Layers import layers
+from Layers import layers_class_class
 
 class ConvModule(nn.Module):
     """A single convolutional module in a VGG network."""
 
     def __init__(self, in_filters, out_filters):
         super(ConvModule, self).__init__()
-        self.conv = layers.Conv2d(in_filters, out_filters, kernel_size=3, padding=1)
+        self.conv = layers_class.Conv2d(in_filters, out_filters, kernel_size=3, padding=1)
 
     def forward(self, x):
         return F.relu(self.conv(x))
@@ -24,8 +24,8 @@ class ConvBNModule(nn.Module):
 
     def __init__(self, in_filters, out_filters):
         super(ConvBNModule, self).__init__()
-        self.conv = layers.Conv2d(in_filters, out_filters, kernel_size=3, padding=1)
-        self.bn = layers.BatchNorm2d(out_filters)
+        self.conv = layers_class.Conv2d(in_filters, out_filters, kernel_size=3, padding=1)
+        self.bn = layers_class.BatchNorm2d(out_filters)
 
     def forward(self, x):
         return F.relu(self.bn(self.conv(x)))
@@ -47,7 +47,7 @@ class VGG(nn.Module):
 
         self.layers = nn.Sequential(*layer_list)        
 
-        self.fc = layers.Linear(512, num_classes)
+        self.fc = layers_class.Linear(512, num_classes)
         if dense_classifier:
             self.fc = nn.Linear(512, num_classes)
 
@@ -62,11 +62,11 @@ class VGG(nn.Module):
 
     def _initialize_weights(self):
         for m in self.modules():
-            if isinstance(m, (layers.Linear, nn.Linear, layers.Conv2d)):
+            if isinstance(m, (layers_class.Linear, nn.Linear, layers_class.Conv2d)):
                 nn.init.kaiming_normal_(m.weight)
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
-            elif isinstance(m, layers.BatchNorm2d):
+            elif isinstance(m, layers_class.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
