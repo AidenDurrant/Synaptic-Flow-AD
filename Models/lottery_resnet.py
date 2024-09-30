@@ -470,4 +470,4 @@ class ResNet2(nn.Module):
         return fc_out, x
 
 def resnet34(input_shape, num_classes, dense_classifier=False, pretrained=False):
-    return ResNet(BasicBlock2, [3, 4, 6, 3], num_classes=num_classes)
+    return ResNet2(BasicBlock2, [3, 4, 6, 3], num_classes=num_classes)
