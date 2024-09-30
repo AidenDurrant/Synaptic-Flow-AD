@@ -207,16 +207,16 @@ class BasicBlock2(nn.Module):
     ):
         super(BasicBlock2, self).__init__()
         if norm_layer is None:
-            norm_layer = nn.BatchNorm2d
+            norm_layer = layers.BatchNorm2d
         if groups != 1 or base_width != 64:
             raise ValueError("BasicBlock only supports groups=1 and base_width=64")
         if dilation > 1:
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = conv3x3(inplanes, planes, stride)
+        self.conv1 = layers.Conv2d(inplanes, planes, 3, stride)
         self.bn1 = norm_layer(planes)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = conv3x3(planes, planes)
+        self.conv2 = layers.Conv2d(planes, planes, 3)
         self.bn2 = norm_layer(planes)
         self.downsample = downsample
         self.stride = stride
@@ -261,11 +261,11 @@ class Bottleneck2(nn.Module):
             norm_layer = nn.BatchNorm2d
         width = int(planes * (base_width / 64.0)) * groups
         # Both self.conv2 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = conv1x1(inplanes, width)
+        self.conv1 = layers.Conv2d(inplanes, width, 3)
         self.bn1 = norm_layer(width)
-        self.conv2 = conv3x3(width, width, stride, groups, dilation)
+        self.conv2 = layers.Conv2d(width, width, 3, stride, groups, dilation)
         self.bn2 = norm_layer(width)
-        self.conv3 = conv1x1(width, planes * self.expansion)
+        self.conv3 = layers.Conv2d(width, planes * self.expansion, 3)
         self.bn3 = norm_layer(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
@@ -345,12 +345,12 @@ class ResNet2(nn.Module):
         if img_dim <= 48:
             # CIFAR Stem
             self.stem = nn.Sequential()
-            self.stem.add_module('conv0', nn.Conv2d(num_channels, num_out_filters, kernel_size=3, stride=1, padding=1, bias=False))
+            self.stem.add_module('conv0', layers.Conv2d(num_channels, num_out_filters, 3, stride=1, padding=1, bias=False))
             self.stem.add_module('BN1', norm_layer(num_out_filters))
             self.stem.add_module('ReLU1', nn.ReLU(inplace=True))
         else:
             self.stem = nn.Sequential()
-            self.stem.add_module('conv0', nn.Conv2d(num_channels, num_out_filters, kernel_size=7, stride=2, padding=2, bias=False))
+            self.stem.add_module('conv0', layers.Conv2d(num_channels, num_out_filters, 7, stride=2, padding=2, bias=False))
             self.stem.add_module('BN1', norm_layer(num_out_filters))
             self.stem.add_module('ReLU1', nn.ReLU(inplace=True))
             self.stem.add_module('MaxPool1', nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
@@ -383,12 +383,12 @@ class ResNet2(nn.Module):
         )
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.fc = layers.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
-            if isinstance(m, nn.Conv2d):
+            if isinstance(m, layers.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+            elif isinstance(m, (layers.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
@@ -413,7 +413,7 @@ class ResNet2(nn.Module):
             stride = 1
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                conv1x1(self.inplanes, planes * block.expansion, stride),
+                layers.Conv2d(self.inplanes, planes * block.expansion,1, stride),
                 norm_layer(planes * block.expansion),
             )
 
