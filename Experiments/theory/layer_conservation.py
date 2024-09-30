@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from Layers import layers_class_class
+from Layers import layers_class
 from Utils import load
 from Utils import generator
 from train import *

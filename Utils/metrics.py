@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import pandas as pd
 from prune import * 
-from Layers import layers_class_class
+from Layers import layers_class
 
 def summary(model, scores, flops, prunable):
     r"""Summary of compression results for a model.

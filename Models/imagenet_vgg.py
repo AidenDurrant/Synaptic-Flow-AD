@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from .utils import load_state_dict_from_url
-from Layers import layers_class_class
+from Layers import layers_class
 
 
 __all__ = [

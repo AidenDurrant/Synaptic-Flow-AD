@@ -12,7 +12,7 @@
 
 import torch
 import torch.nn as nn
-from Layers import layers_class_class
+from Layers import layers_class
 
 class BasicBlock(nn.Module):
     """Basic Block for resnet 18 and resnet 34

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from Layers import layers_class_class
+from Layers import layers_class
 from torch.nn import functional as F
 
 
