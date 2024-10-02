@@ -32,8 +32,8 @@ for cr in compression_ratios:
         f"--verbose " \
         f"--experiment singleshot " \
         f"--seed 42 " \
-        f"--expid synflow_resnet34_cifar10_sparsity_{cr}"\
-        f"--gpu 1"
+        f"--expid synflow_resnet34_cifar10_sparsity_{cr}" \
+        f"--gpu 1" 
 # print(f"Running experiment for sparsity {sparsity}")
 print(f"Compression ratio: {cr}")
 os.system(command)
