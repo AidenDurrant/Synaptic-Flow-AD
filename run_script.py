@@ -32,7 +32,7 @@ for cr in compression_ratios:
         f"--verbose " \
         f"--experiment singleshot " \
         f"--seed 42 " \
-        f"--gpu 1" \
+        f"--gpu 1 " \
         f"--expid synflow_resnet34_cifar10_sparsity_{cr}"
         
 # print(f"Running experiment for sparsity {sparsity}")
