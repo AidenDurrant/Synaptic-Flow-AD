@@ -30,11 +30,20 @@ def parameters(model):
         for param in module.parameters(recurse=False):
             yield param
 
+# def masked_parameters(model, bias=False, batchnorm=False, residual=False):
+#     r"""Returns an iterator over models prunable parameters, yielding both the
+#     mask and parameter tensors.
+#     """
+#     for module in filter(lambda p: prunable(p, batchnorm, residual), model.modules()):
+#         for mask, param in zip(masks(module), module.parameters(recurse=False)):
+#             if param is not module.bias or bias is True:
+#                 yield mask, param
+
 def masked_parameters(model, bias=False, batchnorm=False, residual=False):
     r"""Returns an iterator over models prunable parameters, yielding both the
     mask and parameter tensors.
     """
     for module in filter(lambda p: prunable(p, batchnorm, residual), model.modules()):
         for mask, param in zip(masks(module), module.parameters(recurse=False)):
-            if param is not module.bias or bias is True:
+            if not hasattr(module, 'bias') or param is not module.bias or bias is True:
                 yield mask, param
